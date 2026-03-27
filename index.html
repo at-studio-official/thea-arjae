@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arjae & Thea | Invitation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ================== RESET / BASE ================== */
+body, html {
+  margin:0; padding:0; font-family:'Montserrat',sans-serif; height:100%; background:#000; color:#fff;
+}
+/* ================== HERO BACKGROUND ================== */
+.hero-bg {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: radial-gradient(circle at center, rgba(0,0,0,0.2), rgba(0,0,0,0.85)),
+              linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)),
+              url('assets/images/invitation-small.webp') center/cover no-repeat;
+  background-size: cover;
+  z-index:0; transform: scale(1.05); will-change: transform;
+}
+/* ================== INVITE GATE ================== */
+.invite-gate {
+  position:relative; z-index:2; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; color:#fff; animation: fadeIn 1.5s ease; will-change: opacity, transform;
+}
+@keyframes fadeIn { from {opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
+.invite-gate h1 { font-size:48px; margin-bottom:10px; }
+.invite-gate p { opacity:0.8; letter-spacing:2px; }
+.invite-gate input {
+  width:280px; padding:14px 16px; margin-top:20px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.3); border-radius:4px; color:#fff; font-size:14px; outline:none;
+}
+.invite-gate input::placeholder { color: rgba(255,255,255,0.6); }
+.invite-gate button {
+  width:280px; padding:14px; margin-top:15px; background:#fff; color:#000; border:none; border-radius:4px; font-size:13px; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease, border 0.3s ease;
+}
+.invite-gate button:hover { background:transparent; color:#fff; border:1px solid #fff; }
+.invite-gate button:active { transform:scale(0.97); }
+.invite-gate input:focus { border-color:#d4c1a1; box-shadow:0 0 10px rgba(212,193,161,0.3); }
+#errorMessage { color:red; display:none; margin-top:10px; }
+
+/* ================== MAIN SITE ================== */
+#mainSite { display:none; position:relative; z-index:2; min-height:100vh; color:white; text-align:center; padding-bottom:50px; }
+.open-invitation-envelope {
+  display:flex; flex-direction:column; align-items:center; cursor:pointer; perspective:800px; margin-top:60px; will-change: transform;
+}
+.envelope {
+  width:240px; height:130px; position:relative; transform-style: preserve-3d; transition: transform .3s ease; backface-visibility:hidden;
+  box-shadow:0 15px 40px rgba(0,0,0,0.6);
+}
+.envelope .body {
+  width:100%; height:100%; background:linear-gradient(180deg,#d4c1a1,#a68b6b); border-radius:6px; position:absolute;
+  display:flex; justify-content:center; align-items:flex-end; padding-bottom:14px; font-family:'Playfair Display',serif; font-weight:500; letter-spacing:2px; color:#1a1a1a; text-transform:uppercase;
+}
+.envelope .flap {
+  position:absolute; top:0; left:0; width:100%; height:55px; background:#f8f8f8; border-top-left-radius:6px; border-top-right-radius:6px;
+  transform-origin:top; transition: transform .8s cubic-bezier(0.68,-0.55,0.27,1.55); z-index:2;
+}
+.open-invitation-envelope.animate .flap { transform:rotateX(-180deg) rotateY(3deg); background:#fefefe; }
+.open-invitation-envelope.animate .body { transform:translateY(-15px) scale(0.95); }
+
+/* ================== GUEST LIST ================== */
+#namesListContainer {
+  display:flex; gap:20px; width:90%; margin:50px auto; max-height: calc(100vh - 250px); overflow-y:auto; padding-right:10px;
+}
+.guestColumn { display:flex; flex-direction:column; gap:12px; flex:1; min-width:0; }
+.guestCard {
+  background: rgba(212,193,161,0.08); padding:14px 20px; font-size:16px; font-weight:500; border-radius:12px; text-transform: capitalize;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); word-break: break-word;
+}
+.guestCard:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+#namesListContainer::-webkit-scrollbar { width:0px; }
+#namesListContainer { -ms-overflow-style:none; scrollbar-width:none; }
+@media(max-width:768px){ #namesListContainer{gap:15px;} }
+</style>
+</head>
+<body>
+
+<div class="hero-bg"></div>
+
+<div id="inviteGate" class="invite-gate">
+  <h1>Arjae & Thea</h1>
+  <p>Please enter your invitation name</p>
+  <input type="text" id="guestInput" placeholder="Enter your name">
+  <button id="openBtn">Open Invitation</button>
+  <p id="errorMessage">Sorry, your name is not on the guest list.</p>
+</div>
+
+<div id="mainSite">
+  <h2>Welcome</h2>
+  <h1 id="guestName"></h1>
+  <p>We have reserved <strong id="seatCount"></strong> seats for you.</p>
+
+  <div class="open-invitation-envelope" id="envelopeBtn">
+    <div class="envelope">
+      <div class="flap"></div>
+      <div class="body">Open Invitation</div>
+    </div>
+  </div>
+
+  <div id="namesListContainer"></div>
+</div>
+
+<script>
+// ================== HELPERS ==================
+function normalize(name){ return name.toLowerCase().replace(/\s+/g,' ').trim(); }
+function toTitleCase(name){ return name.split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' '); }
+
+// ================== GUEST DATA ==================
+const guestGroups = [
+
+  // ===== EXISTING GROUPS (converted) =====
+  { members:["Arnold Marquez","Wilen Marquez","Arlene Mae Marquez","Trishia Ann Marquez"].map(n=>({name:n})) },
+  { members:["Laurence Suarez"].map(n=>({name:n})) },
+  { members:["Angelina Marquez","Roberto Marquez","Moises Marquez"].map(n=>({name:n})) },
+  { members:["Bibiana Igat","Babylin Law","Justine I. Law"].map(n=>({name:n})) },
+  { members:["Mayline Pastrana","Jhimwel Pastrana"].map(n=>({name:n})) },
+  { members:["Kenneth Crisostomo"].map(n=>({name:n})) },
+  { members:["Lucito Pendon","Emma Pendon","Ana Pendon"].map(n=>({name:n})) },
+  { members:["Irene Pendon","Argentina Cervantes","Dranreb Cervantes"].map(n=>({name:n})) },
+  { members:["Crisenciano Pendon"].map(n=>({name:n})) },
+  { members:["Dante Diocancil","Lilibeth Diocancil","Daile Sicat","Adrian Sicat","Basilio Pendon"].map(n=>({name:n})) },
+  { members:["Jocelyn Garcia","Jane Garcia","Zayn Shion Garcia"].map(n=>({name:n})) },
+  { members:["Belinda Soriano","Chloe Soriano"].map(n=>({name:n})) },
+  { members:["Marie Calios","Joey Calios"].map(n=>({name:n})) },
+  { members:["Jessa Moralidad","Arlee Villarivera"].map(n=>({name:n})) },
+  { members:["Nichole Kaye Popanes"].map(n=>({name:n})) },
+  { members:["Marty Normandy","Charlyne Villanueva"].map(n=>({name:n})) },
+  { members:["Carla Mae Medina","Edward Cabalfin"].map(n=>({name:n})) },
+  { members:["Cassey Mago"].map(n=>({name:n})) },
+  { members:["Mark Junio"].map(n=>({name:n})) },
+  { members:["Lowell Amisola"].map(n=>({name:n})) },
+  { members:["Jay Bernaldez"].map(n=>({name:n})) },
+  { members:["Joan Quisay"].map(n=>({name:n})) },
+  { members:["Kirsten Orbeta"].map(n=>({name:n})) },
+  { members:["Voven Espiritu","Aries Pauig"].map(n=>({name:n})) },
+  { members:["Mae Matanguihan"].map(n=>({name:n})) },
+  { members:["Aimee Cabrera"].map(n=>({name:n})) },
+  { members:["Keith Salud"].map(n=>({name:n})) },
+  { members:["Eleanor Miraña"].map(n=>({name:n})) },
+  { members:["Evangeline Martinez"].map(n=>({name:n})) },
+  { members:["Cherry Vidanes"].map(n=>({name:n})) },
+
+  // ===== YOUR SMART ALIAS GROUPS =====
+{
+  members: [
+    { name:"Arnold Marquez" },
+    { name:"Wilen Marquez" },
+    { name:"Arlene Mae Marquez", aliases:["Arlene Marquez","Mae Marquez"] },
+    { name:"Trishia Ann Marquez", aliases:["Trishia Marquez","Ann Marquez","Ikay Marquez"] }
+  ]
+},
+{
+  members: [
+    { name:"Andy Galao" },
+    { name:"Lhoveline Galao", aliases:["Lhove Galao","love galao","lhoved galao","loved galao"] }
+  ]
+},
+{
+  members: [
+    { name:"Glenn Igat" },
+    { name:"Marivic Igat", aliases:["Vic Igat"] },
+    { name:"Glem Marie Igat", aliases:["Glery Igat","Glerie Igat"] },
+    { name:"Ghemarose Igat", aliases:["Ghema Igat"] },
+    { name:"Gleghem Igat", aliases:["Ghem Igat","Gem Igat"] }
+  ]
+},
+  {
+    members: [
+      { name:"Arnel Del Rosario" },
+      { name:"Adelaida Del Rosario", aliases:["Aida Del Rosario"] }
+    ]
+  },
+  {
+    members: [
+      { name:"Adrian Del Rosario" },
+      { name:"Jessica Del Rosario", aliases:["Jess Del Rosario"] },
+      { name:"Akio Del Rosario", aliases:["Akio Zion Del Rosario","Zion Del Rosario"] }
+    ]
+  },
+  {
+    members: [
+      { name:"Aileen Del Rosario" },
+      { name:"Arlyn Joyce Cerrero", aliases:["AJ Cerrero","Arlyn Cerrero","Joyce Cerrero"] }
+    ]
+  },
+  {
+    members: [
+      { name:"Arianne Martinez" },
+      { name:"John Patrick Martinez", aliases:["John Martinez","Patrick Martinez","JP Martinez"] },
+      { name:"Phillip Martinez" },
+      { name:"Ace Martinez" },
+      { name:"Pia Martinez" }
+    ]
+  },
+  {
+    members: [
+      { name:"Abigael Sarangay" },
+      { name:"John Paolo Sarangay", aliases:["John Sarangay","Paolo Sarangay"] },
+      { name:"Johnaela Aeris Sarangay", aliases:["Johnaela Sarangay","Aeris Sarangay"] }
+    ]
+  },
+  {
+    members: [
+      { name:"Gilbert Mondroy" },
+      { name:"Belinda Mondroy", aliases:["Vivian Mondroy"] },
+      { name:"Gil Mondroy", aliases:["Gil Angelo Mondroy","Angelo Mondroy"] },
+      { name:"Shandrel Mondroy", aliases:["Sha Mondroy","Mimi Mondroy"] }
+    ]
+  },
+  {
+    members: [
+      { name:"Corazon Patawaran", aliases:["Cora Patawaran"] },
+      { name:"Alvin Patawaran" },
+      { name:"Everlyn Patawaran", aliases:["Bhamz Patawaran"] },
+      { name:"Aldyn Patawaran", aliases:["Aldyn Yzaiah Patawaran","Yzaiah Patawaran"] },
+      { name:"Aubrei Patawaran", aliases:["Aubrei Yzabelle Patawaran","Yzabelle Patawaran"] },
+      { name:"Alvin Patawaran II", aliases:["Ken Patawaran","Alvin Patawaran","Ken Patawaran II"] }
+    ]
+  },
+  {
+    members: [
+      { name:"Rosalie Patawaran", aliases:["Len Patawaran"] },
+      { name:"Angelico Patawaran", aliases:["Jeck Patawaran","Jheck Patawaran","Jec Patawaran","Jhec Patawaran"] },
+      { name:"Anthony Patawaran", aliases:["Anthony Ray Patawaran","Ray Patawaran","tonton patawaran","ton patawaran"] },
+      { name:"Angelico Patawaran II", aliases:["Aries Patawaran","Aris Patawaran","Angelico Patawaran","Aries Patawaran II","Aris Patawaran II"] },
+      { name:"Aljon Patawaran", aliases:["Aljon Ruzzel Patawaran","Ruzzel Patawaran"] },
+      { name:"Angela Patawaran", aliases:["Angela Rose Patawaran","Rose Patawaran","gela patawaran"] },
+      { name:"Angelica Patawaran", aliases:["Angelica Roselle Patawaran","Roselle Patawaran","geca patawaran"] }
+    ]
+  },
+  {
+    members: [
+      { name:"Andrew Patawaran", aliases:["Andrew Richmond Patawaran","Richmond Patawaran"] },
+      { name:"Roselle Patawaran" }
+    ]
+  },
+  {
+    members: [
+      { name:"Manolito Patawaran", aliases:["Noli Patawaran"] },
+      { name:"Elizabeth Patawaran", aliases:["Beth Patawaran"] },
+      { name:"Sarahm Patawaran", aliases:["Sarahm Joy Patawaran","Joy Patawaran"] }
+    ]
+  },
+  {
+    members: [
+      { name:"Maria Theresa Arellano", aliases:["Maria Arellano","Theresa Arellano","Tess Arellano","Thess Arellano","Tes Arellano","Thes Arellano"] },
+      { name:"Alejandro Arellano" }
+    ]
+  },
+  {
+    members: [
+      { name:"Aaron Arellano", aliases:["Aaron Arion Arellano","Arion Arellano"] }
+    ]
+  },
+  {
+    members: [
+      { name:"Alejandro Arellano II", aliases:["Ajel Arellano","Ajel Arellano II"] }
+    ]
+  },
+  {
+    members: [
+      { name:"Evangeline Patawaran", aliases:["Gel Patawaran"] },
+      { name:"Angelo Jyruz Patawaran", aliases:["Jyruz Patawaran","Angelo Patawaran"] },
+      { name:"Jana Mosqueda" }
+    ]
+  },
+  {
+    members: [
+      { name:"Angelito Patawaran III", aliases:["Angelito Obispo Patawaran","Angelito Patawaran"] },
+      { name:"Mary Joy Patawaran", aliases:["Mary Patawaran","Joy Patawaran"] }
+    ]
+  },
+  {
+    members: [
+      { name:"Monina Patawaran", aliases:["Monet Patawaran"] },
+      { name:"Cazh Patawaran", aliases:["Cazh Michael Patawaran","Michael Patawaran"] }
+    ]
+  },
+  {
+    members: [
+      { name:"Noel Del Rosario" },
+      { name:"Nova Esguerra" },
+      { name:"Auntie Rose" }
+    ]
+  }
+
+];
+
+// ================== GUEST CHECK ==================
+function checkGuest(){
+  const input = normalize(document.getElementById('guestInput').value);
+
+  let foundGroup=null, matchedName=null;
+
+  for(const group of guestGroups){
+    for(const member of group.members){
+
+      if(normalize(member.name)===input){
+        foundGroup=group;
+        matchedName=member.name;
+        break;
+      }
+
+      if(member.aliases){
+        const match=member.aliases.find(a=>normalize(a)===input);
+        if(match){
+          foundGroup=group;
+          matchedName=member.name;
+          break;
+        }
+      }
+
+    }
+    if(foundGroup) break;
+  }
+
+  if(!foundGroup){
+    document.getElementById("errorMessage").style.display="block";
+    return;
+  }
+
+  document.getElementById("errorMessage").style.display="none";
+  unlockInvitation(foundGroup, matchedName);
+}
+
+// ================== UNLOCK ==================
+function unlockInvitation(group,name){
+  document.getElementById("inviteGate").style.opacity=0;
+  setTimeout(()=>{
+    document.getElementById("inviteGate").style.display="none";
+    const main=document.getElementById("mainSite");
+    main.style.display="block";
+    main.style.opacity=0;
+
+    document.getElementById("guestName").innerText=toTitleCase(name);
+    document.getElementById("seatCount").innerText=group.members.length;
+
+    buildGuestColumns(group);
+
+    requestAnimationFrame(()=>main.style.opacity=1);
+  },600);
+}
+
+// ================== BUILD LIST ==================
+function buildGuestColumns(group){
+  const container=document.getElementById('namesListContainer');
+  container.innerHTML='';
+
+  const names=group.members.map(m=>m.name);
+
+  const colHeight=window.innerHeight-250;
+  const approxCardHeight=50;
+  const maxCols=window.innerWidth<=768?2:3;
+
+  let columns=[], currentCol=[], currentHeight=0;
+
+  names.forEach(name=>{
+    if(currentHeight+approxCardHeight>colHeight && columns.length<maxCols){
+      columns.push(currentCol);
+      currentCol=[];
+      currentHeight=0;
+    }
+    currentCol.push(name);
+    currentHeight+=approxCardHeight;
+  });
+
+  if(currentCol.length) columns.push(currentCol);
+
+  columns.forEach(col=>{
+    const colDiv=document.createElement('div');
+    colDiv.className='guestColumn';
+
+    col.forEach(n=>{
+      const card=document.createElement('div');
+      card.className='guestCard';
+      card.innerText=toTitleCase(n);
+      colDiv.appendChild(card);
+    });
+
+    container.appendChild(colDiv);
+  });
+}
+
+// ================== EVENTS ==================
+document.getElementById('guestInput').addEventListener('keypress',e=>{if(e.key==='Enter') checkGuest();});
+document.getElementById('openBtn').addEventListener('click',checkGuest);
+
+// ================== ENVELOPE ==================
+const envelopeBtn=document.getElementById('envelopeBtn');
+let opened=false;
+envelopeBtn.addEventListener('click',()=>{
+  if(opened) return;
+  opened=true;
+  envelopeBtn.classList.add('animate');
+  setTimeout(()=>{ window.location.href='main.html'; },1000);
+});
+
+// ================== LOAD ==================
+window.addEventListener('load',()=>{
+  document.querySelector('.hero-bg').style.backgroundImage =
+    "radial-gradient(circle at center, rgba(0,0,0,0.2), rgba(0,0,0,0.85)), " +
+    "linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)), " +
+    "url('assets/images/invitation.webp')";
+  document.getElementById('guestInput').focus();
+});
+</script>
+</body>
+</html>
