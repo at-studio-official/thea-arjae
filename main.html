@@ -15,6 +15,7 @@
 
 <!-- AOS Animation -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
 
 <!-- Gallery: Swipe left/right -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
@@ -24,8 +25,6 @@
 
 <!-- Preload hero image -->
 <link rel="preload" as="image" href="assets/images/cover.webp">
-
-
 </head>
 <body>
 
@@ -46,7 +45,7 @@
 <!-- Quick Nav Menu -->
 <nav id="quick-nav">
   <a href="#hero">Home</a>
-  <a href="#countdown">Countdown</a>
+  <a href="#countdown-section">Countdown</a>
   <a href="#save-the-date">Video: Save the Date</a>
   <a href="#our-story">Our Story</a>
   <a href="#our-journey">Our Journey</a>
@@ -85,10 +84,10 @@
   </div>
 </section>
 
-<!-- COUNTDOWN (WHITE) -->
-<section id="countdown" class="section countdown-section" data-bg="white">
+<!-- COUNTDOWN -->
+<section id="countdown-section" class="section countdown-section" data-bg="white">
   <h2>We're Getting Married</h2>
-  <div id="countdown" class="countdown">
+  <div class="countdown">
       <div class="countdown-item"><span class="count">0</span><span class="label">Days</span></div>
       <div class="countdown-item"><span class="count">0</span><span class="label">Hours</span></div>
       <div class="countdown-item"><span class="count">0</span><span class="label">Minutes</span></div>
@@ -98,12 +97,12 @@
 
 <!-- CINEMATIC VIDEO (BLACK) -->
 <section id="save-the-date" class="section cinematic-video" data-bg="black" data-aos="fade-up">
-  <div class="youtube-container">
-    <iframe width="560" height="315" loading="lazy" src="https://www.youtube.com/embed/36OF1fvTfvI?si=hNlWxoDG0JTNTdbV" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-  </div>
   <div class="video-caption">
     <h2>Our Love Story</h2>
     <p>A glimpse into our journey together</p>
+  </div>
+  <div class="youtube-container">
+    <iframe width="560" height="315" loading="lazy" src="https://www.youtube.com/embed/36OF1fvTfvI?si=hNlWxoDG0JTNTdbV" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
   </div>
 </section>
 
@@ -223,7 +222,7 @@
 </section>
 
 <!-- ENTOURAGE -->
-<section id="entourage" class="section" data-bg="black" id="entourage">
+<section id="entourage" class="section" data-bg="black">
   <h2>Entourage</h2>
   <p>The wonderful people standing by our side on our special day</p>
 
@@ -330,6 +329,7 @@
     <img src="assets/images/church.webp" alt="Ceremony" loading="lazy">
     <div class="event-info">
       <h3>Ceremony</h3>
+      <p>Immaculate Heart of Mary (Diocese of Antipolo)</p>
       <p>November 26, 2027 | 4:00 PM</p>
       <a href="https://maps.app.goo.gl/PdtMHKLNyyRBn3Gc9" class="btn-small" target="_blank">View Map</a>
     </div>
@@ -338,7 +338,8 @@
     <img src="assets/images/reception.webp" alt="Venue" loading="lazy">
     <div class="event-info">
       <h3>Reception Venue</h3>
-      <p>5:30 PM | Venue Name</p>
+      <p>The Garden Hive Events Place, Antipolo City</p>
+      <p>November 26, 2027 | 5:30 PM</p>
       <a href="https://maps.app.goo.gl/e4MzrggpTV4CcDFq6" class="btn-small" target="_blank">View Map</a>
     </div>
   </div>
@@ -594,8 +595,20 @@
 <!-- RSVP (WHITE) -->
 <section id="rsvp" class="section rsvp-section" data-bg="black" data-aos="fade-up">
   <h2>RSVP</h2>
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLSetgRCWiIUBfCcx1eaNrGdE6a05HDqasDjkPNX19fXJVTrE8Q/viewform?usp=dialog " target="_blank" class="btn">Confirm Attendance</a>
+  <button id="rsvpBtn" class="btn">Confirm Attendance</button>
 </section>
+
+<!-- Premium Confirmation Modal -->
+<div id="rsvpModal" class="modal">
+  <div class="modal-content">
+    <h3>Confirm Your Attendance</h3>
+    <p>We are thrilled to celebrate with you! Please click "Proceed" to fill out your RSVP and secure your place at our special day.</p>
+    <div class="modal-buttons">
+      <button id="modalCancel">Cancel</button>
+      <button id="modalProceed">Proceed</button>
+    </div>
+  </div>
+</div>
 
 
 
@@ -616,47 +629,52 @@
 <script defer>
 document.addEventListener("DOMContentLoaded", ()=>{
 
-  // ===== Lazy load Vimeo iframe =====
-  const vimeo = document.getElementById('vimeo-player');
-  const obs = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting && vimeo.dataset.src){
-        vimeo.src = vimeo.dataset.src;
-        obs.disconnect();
-      }
-    });
-  }, { threshold: 0.25 });
-  obs.observe(vimeo);
-
-  // ===== Initialize Swiper =====
+  // ===== Initialize Swiper (gallery slider) =====
   const swiper = new Swiper('.swiper', {
     slidesPerView: 2,
-    loop:true,
-    slidesPerGroup:1,
-    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-    pagination: { el: '.swiper-pagination', clickable:true },
-    breakpoints:{0:{slidesPerView:2},769:{slidesPerView:2}}
+    loop: true,
+    slidesPerGroup: 1,
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev'
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true
+    },
+    breakpoints: {
+      0: { slidesPerView: 2 },
+      769: { slidesPerView: 2 }
+    }
   });
 
-  // ===== AOS =====
-  AOS.init({ once:true, duration:800 });
+  // ===== AOS animations =====
+  AOS.init({
+    once: true,
+    duration: 800
+  });
 
-  // ===== Scroll background color using IntersectionObserver =====
+  // ===== Background color change on scroll =====
   const sections = document.querySelectorAll('.section');
   const body = document.body;
+
   const bgObserver = new IntersectionObserver((entries)=>{
     entries.forEach(entry=>{
       if(entry.isIntersecting){
         body.style.background = getComputedStyle(entry.target).backgroundColor;
       }
     });
-  }, {threshold:0.5});
+  }, { threshold: 0.5 });
+
   sections.forEach(sec => bgObserver.observe(sec));
 
-  // ===== Hide loader after page ready =====
+  // ===== Hide loader after page fully loads =====
   const loader = document.getElementById('loader');
-  setTimeout(()=>loader.style.opacity='0',500);
-  setTimeout(()=>loader.style.display='none',1000);
+  if (loader) {
+    setTimeout(()=> loader.style.opacity = '0', 500);
+    setTimeout(()=> loader.style.display = 'none', 1000);
+  }
+
 });
 </script>
 

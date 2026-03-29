@@ -90,25 +90,30 @@ if (heroSlides.length > 0) {
 }
 
 // ============================================== COUNTDOWN ===============================================
-const countdownItems = document.querySelectorAll('.countdown-item .count');
-const countDate = new Date('November 26, 2027 16:00:00').getTime();
+(function(){
+  const countdownItems = document.querySelectorAll('.countdown .count');
+  const targetDate = new Date("November 26, 2027 16:00:00").getTime();
 
-function updateCountdown() {
-  const now = new Date().getTime();
-  const distance = countDate - now;
-  if (distance < 0) return;
+  function updateCountdown() {
+    const now = new Date().getTime();
+    let diff = targetDate - now;
 
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    if(diff < 0) diff = 0; // avoid negative countdown
 
-  if (countdownItems.length >= 4) {
-    [days, hours, minutes, seconds].forEach((val, i) => countdownItems[i].innerText = val);
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    countdownItems[0].textContent = days;
+    countdownItems[1].textContent = hours;
+    countdownItems[2].textContent = minutes;
+    countdownItems[3].textContent = seconds;
   }
-}
-updateCountdown();
-setInterval(updateCountdown, 1000);
+
+  updateCountdown(); // initial call
+  setInterval(updateCountdown, 1000); // update every second
+})();
 
 // ================================================== JOURNEY, TIMELINE, DRESSCODE, RSVP ===================================
 const animatedSections = document.querySelectorAll('.journey-item, .timeline .event, .dresscode-item, .rsvp-section');
@@ -136,6 +141,29 @@ const sectionObserver = new IntersectionObserver((entries, observer) => {
 }, { threshold: 0.3 });
 
 animatedSections.forEach(sec => sectionObserver.observe(sec));
+
+const rsvpBtn = document.getElementById('rsvpBtn');
+const modal = document.getElementById('rsvpModal');
+const cancelBtn = document.getElementById('modalCancel');
+const proceedBtn = document.getElementById('modalProceed');
+
+rsvpBtn.addEventListener('click', () => {
+  modal.style.display = 'flex';
+});
+
+cancelBtn.addEventListener('click', () => {
+  modal.style.display = 'none';
+});
+
+proceedBtn.addEventListener('click', () => {
+  window.open('https://forms.gle/qME86T6phNhG5NWP8', '_blank');
+  modal.style.display = 'none';
+});
+
+// Close modal if clicking outside the content box
+window.addEventListener('click', e => {
+  if(e.target === modal) modal.style.display = 'none';
+});
 
 // =================================== SMOOTH BACKGROUND TRANSITION =====================================
 const bgSections = document.querySelectorAll('[data-bg]');

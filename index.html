@@ -3,37 +3,106 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arjae & Thea | Invitation</title>
+<title>Wil & Anne | Invitation</title>
+
+<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Preload main background -->
+<link rel="preload" href="assets/images/invitation.webp" as="image">
+
 <style>
 /* ================== RESET / BASE ================== */
 body, html {
-  margin:0; padding:0; font-family:'Montserrat',sans-serif; height:100%; background:#000; color:#fff;
+  margin:0;
+  padding:0;
+  font-family:'Montserrat',sans-serif;
+  height:100%;
+  background:#000;
+  color:#fff;
 }
+
 /* ================== HERO BACKGROUND ================== */
 .hero-bg {
-  position: fixed; top:0; left:0; width:100%; height:100%;
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
   background: radial-gradient(circle at center, rgba(0,0,0,0.2), rgba(0,0,0,0.85)),
               linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)),
               url('assets/images/invitation-small.webp') center/cover no-repeat;
   background-size: cover;
-  z-index:0; transform: scale(1.05); will-change: transform;
+  z-index:0;
+  transform: scale(1.05);
+  will-change: transform;
 }
+
+/* ================== EXCLUSIVE NOTICE ================== */
+.hero-exclusive {
+  position: absolute;
+  top: 15%;
+  width: 100%;
+  text-align: center;
+  z-index: 2;
+}
+.hero-exclusive .exclusive-notice {
+  font-family: 'Playfair Display', serif;
+  font-weight: 500;
+  font-size: 1.2rem;
+  color: #d4c1a1;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  opacity: 0.9;
+  text-shadow: 0 0 12px rgba(212,193,161,0.5);
+}
+
 /* ================== INVITE GATE ================== */
 .invite-gate {
-  position:relative; z-index:2; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; color:#fff; animation: fadeIn 1.5s ease; will-change: opacity, transform;
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  animation: fadeIn 1.5s ease;
+  will-change: opacity, transform;
 }
-@keyframes fadeIn { from {opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
+@keyframes fadeIn {
+  from {opacity:0; transform: translateY(20px);}
+  to {opacity:1; transform: translateY(0);}
+}
 .invite-gate h1 { font-size:48px; margin-bottom:10px; }
 .invite-gate p { opacity:0.8; letter-spacing:2px; }
 .invite-gate input {
-  width:280px; padding:14px 16px; margin-top:20px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.3); border-radius:4px; color:#fff; font-size:14px; outline:none;
+  width:280px;
+  padding:14px 16px;
+  margin-top:20px;
+  background: rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.3);
+  border-radius:4px;
+  color:#fff;
+  font-size:14px;
+  outline:none;
 }
 .invite-gate input::placeholder { color: rgba(255,255,255,0.6); }
 .invite-gate button {
-  width:280px; padding:14px; margin-top:15px; background:#fff; color:#000; border:none; border-radius:4px; font-size:13px; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
+  width:280px;
+  padding:14px;
+  margin-top:15px;
+  background:#fff;
+  color:#000;
+  border:none;
+  border-radius:4px;
+  font-size:13px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  cursor:pointer;
   transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease, border 0.3s ease;
 }
 .invite-gate button:hover { background:transparent; color:#fff; border:1px solid #fff; }
@@ -42,46 +111,111 @@ body, html {
 #errorMessage { color:red; display:none; margin-top:10px; }
 
 /* ================== MAIN SITE ================== */
-#mainSite { display:none; position:relative; z-index:2; min-height:100vh; color:white; text-align:center; padding-bottom:50px; }
+#mainSite {
+  display:none;
+  position:relative;
+  z-index:2;
+  min-height:100vh;
+  color:white;
+  text-align:center;
+  padding-bottom:50px;
+}
+
+/* Envelope animation */
 .open-invitation-envelope {
-  display:flex; flex-direction:column; align-items:center; cursor:pointer; perspective:800px; margin-top:60px; will-change: transform;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:pointer;
+  perspective:800px;
+  margin-top:60px;
+  will-change:transform;
 }
 .envelope {
-  width:240px; height:130px; position:relative; transform-style: preserve-3d; transition: transform .3s ease; backface-visibility:hidden;
-  box-shadow:0 15px 40px rgba(0,0,0,0.6);
+  width:240px;
+  height:130px;
+  position:relative;
+  transform-style: preserve-3d;
+  transition: transform .3s ease;
+  backface-visibility: hidden;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
 }
 .envelope .body {
-  width:100%; height:100%; background:linear-gradient(180deg,#d4c1a1,#a68b6b); border-radius:6px; position:absolute;
-  display:flex; justify-content:center; align-items:flex-end; padding-bottom:14px; font-family:'Playfair Display',serif; font-weight:500; letter-spacing:2px; color:#1a1a1a; text-transform:uppercase;
+  width:100%;
+  height:100%;
+  background: linear-gradient(180deg,#d4c1a1,#a68b6b);
+  border-radius:6px;
+  position:absolute;
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  padding-bottom:14px;
+  font-family:'Playfair Display', serif;
+  font-weight:500;
+  letter-spacing:2px;
+  color:#1a1a1a;
+  text-transform:uppercase;
 }
 .envelope .flap {
-  position:absolute; top:0; left:0; width:100%; height:55px; background:#f8f8f8; border-top-left-radius:6px; border-top-right-radius:6px;
-  transform-origin:top; transition: transform .8s cubic-bezier(0.68,-0.55,0.27,1.55); z-index:2;
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:55px;
+  background:#f8f8f8;
+  border-top-left-radius:6px;
+  border-top-right-radius:6px;
+  transform-origin:top;
+  transition: transform .8s cubic-bezier(0.68,-0.55,0.27,1.55);
+  z-index:2;
 }
 .open-invitation-envelope.animate .flap { transform:rotateX(-180deg) rotateY(3deg); background:#fefefe; }
 .open-invitation-envelope.animate .body { transform:translateY(-15px) scale(0.95); }
 
-/* ================== GUEST LIST ================== */
+/* Guest list */
 #namesListContainer {
-  display:flex; gap:20px; width:90%; margin:50px auto; max-height: calc(100vh - 250px); overflow-y:auto; padding-right:10px;
+  display:flex;
+  gap:20px;
+  width:90%;
+  margin:50px auto;
+  max-height:calc(100vh - 250px);
+  overflow-y:auto;
+  padding-right:10px;
 }
-.guestColumn { display:flex; flex-direction:column; gap:12px; flex:1; min-width:0; }
+.guestColumn {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  flex:1;
+  min-width:0;
+}
 .guestCard {
-  background: rgba(212,193,161,0.08); padding:14px 20px; font-size:16px; font-weight:500; border-radius:12px; text-transform: capitalize;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); word-break: break-word;
+  background: rgba(212,193,161,0.08);
+  padding:14px 20px;
+  font-size:16px;
+  font-weight:500;
+  border-radius:12px;
+  text-transform:capitalize;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+  word-break:break-word;
 }
-.guestCard:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.guestCard:hover { background:rgba(255,255,255,0.12); transform:translateY(-2px); }
 #namesListContainer::-webkit-scrollbar { width:0px; }
 #namesListContainer { -ms-overflow-style:none; scrollbar-width:none; }
-@media(max-width:768px){ #namesListContainer{gap:15px;} }
+@media(max-width:768px){ #namesListContainer{ gap:15px; } }
+
 </style>
 </head>
-<body>
 
+<body>
 <div class="hero-bg"></div>
 
+<div id="exclusiveNotice" class="hero-exclusive">
+  <p class="exclusive-notice">This invitation is exclusively for invited guests</p>
+</div>
+
 <div id="inviteGate" class="invite-gate">
-  <h1>Arjae & Thea</h1>
+  <h1>Wil & Anne</h1>
   <p>Please enter your invitation name</p>
   <input type="text" id="guestInput" placeholder="Enter your name">
   <button id="openBtn">Open Invitation</button>
@@ -105,8 +239,17 @@ body, html {
 
 <script>
 // ================== HELPERS ==================
-function normalize(name){ return name.toLowerCase().replace(/\s+/g,' ').trim(); }
-function toTitleCase(name){ return name.split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' '); }
+const guestInput = document.getElementById('guestInput');
+const errorMessage = document.getElementById('errorMessage');
+const guestNameEl = document.getElementById('guestName');
+const seatCountEl = document.getElementById('seatCount');
+const inviteGate = document.getElementById('inviteGate');
+const mainSite = document.getElementById('mainSite');
+const namesListContainer = document.getElementById('namesListContainer');
+const exclusiveNotice = document.getElementById('exclusiveNotice');
+
+const normalize = name => name.toLowerCase().replace(/\s+/g,' ').trim();
+const toTitleCase = name => name.split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
 
 // ================== GUEST DATA ==================
 const guestGroups = [
@@ -289,123 +432,98 @@ const guestGroups = [
 
 ];
 
-// ================== GUEST CHECK ==================
+// ================== CHECK GUEST ==================
 function checkGuest(){
-  const input = normalize(document.getElementById('guestInput').value);
+  const input = normalize(guestInput.value);
+  let foundGroup = null, matchedName = null;
 
-  let foundGroup=null, matchedName=null;
-
-  for(const group of guestGroups){
+  outer: for(const group of guestGroups){
     for(const member of group.members){
-
       if(normalize(member.name)===input){
         foundGroup=group;
         matchedName=member.name;
-        break;
+        break outer;
       }
-
       if(member.aliases){
         const match=member.aliases.find(a=>normalize(a)===input);
-        if(match){
-          foundGroup=group;
-          matchedName=member.name;
-          break;
-        }
+        if(match){ foundGroup=group; matchedName=member.name; break outer; }
       }
-
     }
-    if(foundGroup) break;
   }
 
-  if(!foundGroup){
-    document.getElementById("errorMessage").style.display="block";
-    return;
-  }
+  if(!foundGroup){ errorMessage.style.display="block"; return; }
 
-  document.getElementById("errorMessage").style.display="none";
+  errorMessage.style.display="none";
   unlockInvitation(foundGroup, matchedName);
 }
 
-// ================== UNLOCK ==================
-function unlockInvitation(group,name){
-  document.getElementById("inviteGate").style.opacity=0;
+// ================== UNLOCK INVITATION ==================
+function unlockInvitation(group, name){
+  inviteGate.style.opacity = 0;
+  if(exclusiveNotice) exclusiveNotice.style.display = 'none';
   setTimeout(()=>{
-    document.getElementById("inviteGate").style.display="none";
-    const main=document.getElementById("mainSite");
-    main.style.display="block";
-    main.style.opacity=0;
-
-    document.getElementById("guestName").innerText=toTitleCase(name);
-    document.getElementById("seatCount").innerText=group.members.length;
-
+    inviteGate.style.display = "none";
+    mainSite.style.display = "block";
+    mainSite.style.opacity = 0;
+    guestNameEl.innerText = toTitleCase(name);
+    seatCountEl.innerText = group.members.length;
     buildGuestColumns(group);
-
-    requestAnimationFrame(()=>main.style.opacity=1);
+    requestAnimationFrame(()=> mainSite.style.opacity = 1);
   },600);
 }
 
-// ================== BUILD LIST ==================
+// ================== BUILD GUEST COLUMNS ==================
 function buildGuestColumns(group){
-  const container=document.getElementById('namesListContainer');
-  container.innerHTML='';
-
-  const names=group.members.map(m=>m.name);
-
-  const colHeight=window.innerHeight-250;
-  const approxCardHeight=50;
-  const maxCols=window.innerWidth<=768?2:3;
-
+  namesListContainer.innerHTML = "";
+  const names = group.members.map(m=>m.name);
+  const colHeight = window.innerHeight - 250;
+  const approxCardHeight = 50;
+  const maxCols = window.innerWidth <=768 ? 2 : 3;
   let columns=[], currentCol=[], currentHeight=0;
 
   names.forEach(name=>{
-    if(currentHeight+approxCardHeight>colHeight && columns.length<maxCols){
-      columns.push(currentCol);
-      currentCol=[];
-      currentHeight=0;
+    if(currentHeight+approxCardHeight > colHeight && columns.length < maxCols){
+      columns.push(currentCol); currentCol=[]; currentHeight=0;
     }
     currentCol.push(name);
-    currentHeight+=approxCardHeight;
+    currentHeight += approxCardHeight;
   });
-
   if(currentCol.length) columns.push(currentCol);
 
   columns.forEach(col=>{
-    const colDiv=document.createElement('div');
+    const colDiv = document.createElement('div');
     colDiv.className='guestColumn';
-
     col.forEach(n=>{
-      const card=document.createElement('div');
+      const card = document.createElement('div');
       card.className='guestCard';
-      card.innerText=toTitleCase(n);
+      card.innerText = toTitleCase(n);
       colDiv.appendChild(card);
     });
-
-    container.appendChild(colDiv);
+    namesListContainer.appendChild(colDiv);
   });
 }
 
 // ================== EVENTS ==================
-document.getElementById('guestInput').addEventListener('keypress',e=>{if(e.key==='Enter') checkGuest();});
-document.getElementById('openBtn').addEventListener('click',checkGuest);
+guestInput.addEventListener('keypress', e=>{ if(e.key==='Enter') checkGuest(); });
+document.getElementById('openBtn').addEventListener('click', checkGuest);
 
-// ================== ENVELOPE ==================
-const envelopeBtn=document.getElementById('envelopeBtn');
-let opened=false;
-envelopeBtn.addEventListener('click',()=>{
+// ================== ENVELOPE ANIMATION ==================
+const envelopeBtn = document.getElementById('envelopeBtn');
+let opened = false;
+envelopeBtn.addEventListener('click', ()=>{
   if(opened) return;
-  opened=true;
+  opened = true;
   envelopeBtn.classList.add('animate');
-  setTimeout(()=>{ window.location.href='main.html'; },1000);
+  setTimeout(()=>{ window.location.href='main.html'; }, 1000);
 });
 
-// ================== LOAD ==================
-window.addEventListener('load',()=>{
+// ================== ON LOAD ==================
+window.addEventListener('load', ()=>{
   document.querySelector('.hero-bg').style.backgroundImage =
-    "radial-gradient(circle at center, rgba(0,0,0,0.2), rgba(0,0,0,0.85)), " +
-    "linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)), " +
-    "url('assets/images/invitation.webp')";
-  document.getElementById('guestInput').focus();
+    "radial-gradient(circle at center, rgba(0,0,0,0.2), rgba(0,0,0,0.85)), linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)), url('assets/images/invitation.webp')";
+  guestInput.focus();
 });
+
 </script>
 </body>
 </html>
